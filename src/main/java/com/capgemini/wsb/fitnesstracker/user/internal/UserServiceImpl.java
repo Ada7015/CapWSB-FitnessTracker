@@ -45,4 +45,11 @@ class UserServiceImpl implements UserService, UserProvider {
         return userRepository.findById(id);
     }
 
+    public Optional<User> findUserByFirstName(String fistName) {
+        return userRepository.findByFirstName(fistName);
+    }
+
+    public Optional<User> findUserByLastName(String lastName) {
+        return userRepository.findByLastName(lastName);
+    }
 }

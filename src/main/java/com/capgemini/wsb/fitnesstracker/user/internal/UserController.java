@@ -4,7 +4,9 @@ import com.capgemini.wsb.fitnesstracker.user.api.User;
 import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
 import com.capgemini.wsb.fitnesstracker.user.userBasicInfo.UserBasicInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -55,8 +57,23 @@ class UserController {
                 .orElseThrow(NoSuchElementException::new);
     }
 
+    @GetMapping("find-older-users/{age}")
+    public List<UserDto> findOlderUsers(@PathVariable Long age) throws ResponseStatusException {
+        List<UserDto> users = userService.findOlderUsers(age)
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
+
+        if (users.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No users found older than ${age}");
+        }
+
+        return users;
+    }
+
     @PostMapping("add-user")
     public User addUser(@RequestBody UserDto userDto) throws InterruptedException {
         return userService.createUser(userMapper.toEntity(userDto));
     }
+
 }

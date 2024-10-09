@@ -1,7 +1,7 @@
 package com.capgemini.wsb.fitnesstracker.user.internal;
 
 import com.capgemini.wsb.fitnesstracker.user.api.User;
-import com.capgemini.wsb.fitnesstracker.user.userBasicInfo.UserBasicInfo;
+import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +24,11 @@ class UserController {
                           .toList();
     }
 
-    @GetMapping("basic-information")
-    public List<UserBasicInfo> getBasicUsers() {
-        return userService.findAllUsers()
-                .stream()
-                .map(userMapper::toUserBasicInfo)
-                .toList();
+    @GetMapping("get-user-by-id/{id}")
+    public UserDto getUserById(@PathVariable Long id) throws UserNotFoundException {
+        return userService.findUserById(id)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @PostMapping

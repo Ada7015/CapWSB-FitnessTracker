@@ -1,6 +1,7 @@
 package com.capgemini.wsb.fitnesstracker.user.internal;
 
 import com.capgemini.wsb.fitnesstracker.user.api.User;
+import com.capgemini.wsb.fitnesstracker.user.userBasicInfo.UserBasicInfo;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,4 +23,11 @@ class UserMapper {
                         userDto.email());
     }
 
+    UserBasicInfo toUserBasicInfo(User user) {
+        return new UserBasicInfo(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName()
+        );
+    }
 }

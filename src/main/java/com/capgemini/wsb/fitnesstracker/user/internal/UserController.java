@@ -72,8 +72,15 @@ class UserController {
     }
 
     @PostMapping("add-user")
-    public User addUser(@RequestBody UserDto userDto) throws InterruptedException {
+    public User addUser(@RequestBody UserDto userDto) {
         return userService.createUser(userMapper.toEntity(userDto));
     }
 
+    @PostMapping("update-user")
+    public User updateUser(@RequestBody UserDto updatedUserDto) throws IllegalArgumentException {
+        if (updatedUserDto.Id() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Id needed to update user");
+        }
+        return userService.updateUser(userMapper.toEntity(updatedUserDto));
+    }
 }

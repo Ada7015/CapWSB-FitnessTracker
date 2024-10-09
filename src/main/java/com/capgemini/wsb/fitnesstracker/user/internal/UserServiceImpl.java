@@ -57,4 +57,8 @@ class UserServiceImpl implements UserService, UserProvider {
     public List<User> findOlderUsers(Long age) {
         return userRepository.findAllByBirthdateBefore(LocalDate.now().minusYears(age));
     }
+
+    public User updateUser(final User user) {
+        return userRepository.save(user);
+    }
 }

@@ -41,7 +41,6 @@ class UserController {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-
     @GetMapping("get-user-by-first-name/{firstName}")
     public UserDto getUserByFirstName(@PathVariable String firstName) throws NoSuchElementException {
         return userService.findUserByFirstName(firstName)
@@ -56,14 +55,8 @@ class UserController {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    @PostMapping
+    @PostMapping("add-user")
     public User addUser(@RequestBody UserDto userDto) throws InterruptedException {
-
-        // Demonstracja how to use @RequestBody
-        System.out.println("User with e-mail: " + userDto.email() + "passed to the request");
-
-        // TODO: saveUser with Service and return User
-        return null;
+        return userService.createUser(userMapper.toEntity(userDto));
     }
-
 }

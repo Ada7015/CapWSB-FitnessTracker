@@ -38,8 +38,8 @@ public class TrainingServiceImpl implements TrainingProvider, TrainingService {
     }
 
     @Override
-    public List<Training> getTrainingsByEndDate(Date endDate) {
-        return trainingRepository.findAllByEndTimeBefore(endDate);
+    public List<Training> getTrainingsByStartTime(Date startDate) {
+        return trainingRepository.findAllByStartTimeAfter(startDate);
     }
 
     @Override

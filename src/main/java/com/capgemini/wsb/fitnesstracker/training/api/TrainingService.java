@@ -11,7 +11,7 @@ public interface TrainingService {
 
     List<Training> getTrainingsByUserId(Long userId);
 
-    List<Training> getTrainingsByEndDate(Date endDate);
+    List<Training> getTrainingsByStartTime(Date startDate);
 
     List<Training> getTrainingsByActivityType(ActivityType activityType);
 

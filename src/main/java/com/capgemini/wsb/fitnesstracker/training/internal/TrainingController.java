@@ -5,6 +5,7 @@ import com.capgemini.wsb.fitnesstracker.training.api.TrainingDto;
 import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -50,13 +51,13 @@ public class TrainingController {
     /**
      * Retrieves all ended trainings defined by end date.
      *
-     * @param endDate the end date
+     * @param startTime the end date
      * @return the TrainingDto of the found trainings which ended before end date
      *
      */
-    @GetMapping("/get-trainings-by-end-date")
-    public List<TrainingDto> getTrainingsByEndDate(@RequestParam("endDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
-        return trainingService.getTrainingsByEndDate(endDate)
+    @GetMapping("/get-trainings-by-start-date")
+    public List<TrainingDto> getTrainingsByStartTime(@RequestParam("startTime") @DateTimeFormat(pattern="yyyy-MM-dd") Date startTime) {
+        return trainingService.getTrainingsByStartTime(startTime)
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();
@@ -85,6 +86,7 @@ public class TrainingController {
      *
      */
     @PostMapping("/create-training")
+    @ResponseStatus(HttpStatus.CREATED)
     public TrainingDto createTraining(@RequestBody() CreateUpdateTrainingDto createTrainingDto) {
         return trainingMapper.toDto(trainingService.createTraining(createTrainingDto));
     }
@@ -97,7 +99,7 @@ public class TrainingController {
      * @return the newly created trainingDto
      *
      */
-    @PostMapping("/update-training/{trainingId}")
+    @PutMapping("/update-training/{trainingId}")
     public TrainingDto updateTraining(@PathVariable("trainingId") Long trainingId, @RequestBody() CreateUpdateTrainingDto createTrainingDto) {
         return trainingMapper.toDto(trainingService.updateTraining(trainingId, createTrainingDto));
     }

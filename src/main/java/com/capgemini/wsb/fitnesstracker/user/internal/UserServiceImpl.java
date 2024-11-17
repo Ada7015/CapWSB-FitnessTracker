@@ -2,6 +2,7 @@ package com.capgemini.wsb.fitnesstracker.user.internal;
 
 import com.capgemini.wsb.fitnesstracker.exception.api.NotFoundException;
 import com.capgemini.wsb.fitnesstracker.user.api.User;
+import com.capgemini.wsb.fitnesstracker.user.api.UserDto;
 import com.capgemini.wsb.fitnesstracker.user.api.UserProvider;
 import com.capgemini.wsb.fitnesstracker.user.api.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import java.util.Optional;
 class UserServiceImpl implements UserService, UserProvider {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
-
 
     /**
      * Creates a new {@link User} entity and saves it in the database.
@@ -75,6 +74,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param id the ID of the user to retrieve; must not be null
      * @return an {@link Optional} containing the found {@link User}, or empty if not found
      */
+    @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -85,6 +85,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param fistName the first name of the user to retrieve; must not be null
      * @return an {@link Optional} containing the found {@link User}, or empty if not found
      */
+    @Override
     public Optional<User> findUserByFirstName(String fistName) {
         return userRepository.findByFirstName(fistName);
     }
@@ -95,6 +96,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param lastName the last name of the user to retrieve; must not be null
      * @return an {@link Optional} containing the found {@link User}, or empty if not found
      */
+    @Override
     public Optional<User> findUserByLastName(String lastName) {
         return userRepository.findByLastName(lastName);
     }
@@ -105,6 +107,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param age the age threshold to check against
      * @return a list of {@link User} entities older than the specified age
      */
+    @Override
     public List<User> findOlderUsers(Long age) {
         return userRepository.findAllByBirthdateBefore(LocalDate.now().minusYears(age));
     }
@@ -116,6 +119,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @return the updated {@link User} entity
      * @throws IllegalArgumentException if the {@code user} is null
      */
+    @Override
     public User updateUser(final User user) {
         return userRepository.save(user);
     }
@@ -126,6 +130,7 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param id the ID of the user to delete; must not be null
      * @throws NotFoundException if no user with the specified ID exists
      */
+    @Override
     public void deleteUser(Long id) {
         if(userRepository.existsById(id)){
             throw new NotFoundException("User with id " + id + " does not exist");
@@ -140,9 +145,9 @@ class UserServiceImpl implements UserService, UserProvider {
      * @return the {@link UserDto} of the found user
      * @throws NotFoundException if no user with the specified email exists
      */
-    public UserDto findByEmail(String email) {
-        User user =  userRepository.findByEmail(email)
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " does not exist"));
-        return userMapper.toDto(user);
     }
 }

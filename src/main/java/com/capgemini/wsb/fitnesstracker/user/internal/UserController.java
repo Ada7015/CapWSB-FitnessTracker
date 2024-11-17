@@ -99,7 +99,7 @@ class UserController {
 
     @GetMapping("get-user-by-email/{email}")
     public UserDto getUserByEmail(@PathVariable String email) {
-        return userService.findByEmail(email);
+        return userMapper.toDto(userService.findByEmail(email));
     }
 
     /**

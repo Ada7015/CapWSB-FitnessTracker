@@ -1,5 +1,6 @@
 package com.capgemini.wsb.fitnesstracker.training.internal;
 
+import com.capgemini.wsb.fitnesstracker.training.api.CreateUpdateTrainingDto;
 import com.capgemini.wsb.fitnesstracker.training.api.TrainingDto;
 import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class TrainingController {
      *
      * @param endDate the end date
      * @return the TrainingDto of the found trainings which ended before end date
-     * @throws UserNotFoundException if no training for defined end date is found
+     *
      */
     @GetMapping("/get-trainings-by-end-date")
     public List<TrainingDto> getTrainingsByEndDate(@RequestParam("endDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
@@ -66,7 +67,7 @@ public class TrainingController {
      *
      * @param activityType is activity type
      * @return the TrainingDto of the found trainings with defined activity
-     * @throws UserNotFoundException if no training for defined activity is found
+     *
      */
     @GetMapping("/get-trainings-by-activity-type/{activity}")
     public List<TrainingDto> getTrainingsByActivity(@PathVariable("activity") String activityType) {
@@ -74,5 +75,30 @@ public class TrainingController {
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();
+    }
+
+    /**
+     * Creates new training
+     *
+     * @param createTrainingDto is a new training to save
+     * @return the newly created trainingDto
+     *
+     */
+    @PostMapping("/create-training")
+    public TrainingDto createTraining(@RequestBody() CreateUpdateTrainingDto createTrainingDto) {
+        return trainingMapper.toDto(trainingService.createTraining(createTrainingDto));
+    }
+
+    /**
+     * Update existing training
+     *
+     * @param trainingId is id of training that needs to be updated
+     * @param createTrainingDto is updated training
+     * @return the newly created trainingDto
+     *
+     */
+    @PostMapping("/update-training/{trainingId}")
+    public TrainingDto updateTraining(@PathVariable("trainingId") Long trainingId, @RequestBody() CreateUpdateTrainingDto createTrainingDto) {
+        return trainingMapper.toDto(trainingService.updateTraining(trainingId, createTrainingDto));
     }
 }

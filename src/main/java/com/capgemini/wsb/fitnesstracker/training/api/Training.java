@@ -41,6 +41,22 @@ public class Training {
     private double averageSpeed;
 
     public Training(
+            final Long id,
+            final User user,
+            final Date startTime,
+            final Date endTime,
+            final ActivityType activityType,
+            final double distance,
+            final double averageSpeed) {
+        this.user = user;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.activityType = activityType;
+        this.distance = distance;
+        this.averageSpeed = averageSpeed;
+    }
+
+    public Training(
             final User user,
             final Date startTime,
             final Date endTime,

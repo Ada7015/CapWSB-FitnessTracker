@@ -219,7 +219,5 @@ class TrainingApiIntegrationTest extends IntegrationTestBase {
                 distance,
                 averageSpeed);
     }
-
-
 }
 

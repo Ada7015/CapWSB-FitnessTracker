@@ -16,7 +16,6 @@ import java.util.List;
 import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,7 +54,7 @@ class UserApiIntegrationTest extends IntegrationTestBase {
         User user1 = existingUser(generateUser());
         User user2 = existingUser(generateUser());
 
-        mockMvc.perform(get("/v1/users/simple").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
                 .andDo(log())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -87,12 +86,12 @@ class UserApiIntegrationTest extends IntegrationTestBase {
     void shouldReturnDetailsAboutUser_whenGettingUserByEmail() throws Exception {
         User user1 = existingUser(generateUser());
 
-        mockMvc.perform(get("/v1/users/email").param("email", user1.getEmail()).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/v1/users/get-user-by-email/{email}", user1.getEmail()).contentType(MediaType.APPLICATION_JSON))
                 .andDo(log())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").value(user1.getId().intValue()))
-                .andExpect(jsonPath("$[0].email").value(user1.getEmail()));
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$.Id").value(user1.getId().intValue()))
+                .andExpect(jsonPath("$.email").value(user1.getEmail()));
     }
 
     @Test
@@ -101,7 +100,7 @@ class UserApiIntegrationTest extends IntegrationTestBase {
         User user2 = existingUser(generateUserWithDate(LocalDate.of(2024, 8, 11)));
 
 
-        mockMvc.perform(get("/v1/users/older/{time}", LocalDate.of(2024, 8, 10)).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/v1/users/find-older-users/{age}", 1L).contentType(MediaType.APPLICATION_JSON))
                 .andDo(log())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -116,20 +115,17 @@ class UserApiIntegrationTest extends IntegrationTestBase {
     void shouldRemoveUserFromRepository_whenDeletingClient() throws Exception {
         User user1 = existingUser(generateUser());
 
-
-        mockMvc.perform(delete("/v1/users/{userId}", user1.getId())
+        mockMvc.perform(delete("/v1/users/{id}", user1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(log())
                 .andExpect(status().isNoContent());
 
         List<User> allUser = getAllUsers();
         assertThat(allUser).isEmpty();
-
     }
 
     @Test
     void shouldPersistUser_whenCreatingUser() throws Exception {
-
         String USER_NAME = "Mike";
         String USER_LAST_NAME = "Scott";
         String USER_BIRTHDATE = "1999-09-29";
@@ -150,7 +146,7 @@ class UserApiIntegrationTest extends IntegrationTestBase {
                 USER_BIRTHDATE,
                 USER_EMAIL);
 
-        mockMvc.perform(post("/v1/users")
+        mockMvc.perform(post("/v1/users/add-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(creationRequest))
                 .andDo(log())
@@ -185,12 +181,11 @@ class UserApiIntegrationTest extends IntegrationTestBase {
                 }
                 """.formatted(
                 USER_NAME,
-
                 USER_LAST_NAME,
                 USER_BIRTHDATE,
                 USER_EMAIL);
 
-        mockMvc.perform(put("/v1/users/{userId}", user1.getId())
+        mockMvc.perform(put("/v1/users/{id}", user1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateRequest));
 
@@ -210,6 +205,4 @@ class UserApiIntegrationTest extends IntegrationTestBase {
     private static User generateUserWithDate(LocalDate date) {
         return new User(randomUUID().toString(), randomUUID().toString(), date, randomUUID().toString());
     }
-
-
 }

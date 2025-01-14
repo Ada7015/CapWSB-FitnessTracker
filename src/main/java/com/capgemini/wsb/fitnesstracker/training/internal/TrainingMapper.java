@@ -5,7 +5,7 @@ import com.capgemini.wsb.fitnesstracker.training.api.TrainingDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrainingMapper {
+class TrainingMapper {
 
     TrainingDto toDto(Training training) {
         return new TrainingDto(

@@ -120,7 +120,11 @@ class UserServiceImpl implements UserService, UserProvider {
      * @throws IllegalArgumentException if the {@code user} is null
      */
     @Override
-    public User updateUser(final User user) {
+    public User updateUser(final User user, final Long userId) {
+        if (!userRepository.existsById(userId)){
+            throw new NotFoundException("User with id " + userId + " does not exist");
+        }
+        user.setId(userId);
         return userRepository.save(user);
     }
 
@@ -132,7 +136,7 @@ class UserServiceImpl implements UserService, UserProvider {
      */
     @Override
     public void deleteUser(Long id) {
-        if(userRepository.existsById(id)){
+        if (!userRepository.existsById(id)){
             throw new NotFoundException("User with id " + id + " does not exist");
         }
         userRepository.deleteById(id);
@@ -148,6 +152,6 @@ class UserServiceImpl implements UserService, UserProvider {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email " + email + " does not exist"));
+            .orElseThrow(() -> new NotFoundException("User with email " + email + " does not exist"));
     }
 }

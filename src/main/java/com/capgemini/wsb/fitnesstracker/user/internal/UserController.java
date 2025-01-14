@@ -20,7 +20,6 @@ class UserController {
 
     private final UserMapper userMapper;
 
-
     /**
      * Retrieves a list of all users.
      *
@@ -122,6 +121,7 @@ class UserController {
 
         return users;
     }
+
     /**
      * Adds a new user to the system.
      *
@@ -129,9 +129,11 @@ class UserController {
      * @return the created User object
      */
     @PostMapping("add-user")
+    @ResponseStatus(HttpStatus.CREATED)
     public User addUser(@RequestBody UserDto userDto) {
         return userService.createUser(userMapper.toEntity(userDto));
     }
+
     /**
      * Updates an existing user.
      *
@@ -145,7 +147,7 @@ class UserController {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Id needed to update user");
         }
-        return userService.updateUser(userMapper.toEntity(updatedUserDto));
+        return userService.updateUser(userMapper.toEntity(updatedUserDto), id);
     }
 
     /**
